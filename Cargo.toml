@@ -4,6 +4,12 @@ version = "0.1.0"
 authors = ["Jocelyne Piguave <josychirlider@hotmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+actix-web = "1.0.8"
+serde = { version = "1.0.101", features = ["derive"] }
+actix-multipart = "0.1.4"
+futures = "0.1.29"
+actix-form-data = "0.4.0"
+mime = "0.3.14"
+failure = "0.1.5"
+csv = "1"
