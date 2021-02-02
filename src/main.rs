@@ -1,4 +1,8 @@
 extern crate csv;
+extern crate serde;
+
+#[macro_use]
+extern crate serde_derive;
 use std::path::PathBuf;
 use actix_multipart::Multipart;
 use actix_web::{
@@ -13,6 +17,20 @@ use std::process;
 
 struct FileNamer;
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+struct Record {
+    ci: u64,
+    name: String,
+    gender: char,
+    date: String,
+    state: String,
+    number_phon: String,
+    address: String,
+    email: String,
+}
+
+
 impl FilenameGenerator for FileNamer {
     fn next_filename(&self, _: &mime::Mime) -> Option<PathBuf> {
         let mut p = PathBuf::new();
@@ -22,9 +40,12 @@ impl FilenameGenerator for FileNamer {
 }
 fn run() -> Result<(), Box<dyn E>> {
     let file = File::open("C:/Users/Kuris/postgre-migration/uploaded-csvfile/file.csv")?;
-    let mut rdr = csv::Reader::from_reader(file);
-    for result in rdr.records() {
-        let record = result?;
+    let mut rdr = csv::ReaderBuilder::new()
+        .has_headers(false)
+        .delimiter(b';')
+        .from_reader(file);
+    for result in rdr.deserialize() {
+        let record: Record = result?;
         println!("{:?}", record);
     }
     Ok(())
